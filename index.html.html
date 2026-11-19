@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blue Card &amp; CTC Asset Portal</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .preview-mobile-shell {
+      max-width: 412px;
+      margin: 20px auto;
+      border: 10px solid #0f172a;
+      border-radius: 36px;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+      overflow: hidden;
+      background: #f8fafc;
+    }
+    .preview-embed-shell {
+      max-width: 1060px;
+      margin: 20px auto;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .toast-enter {
+      animation: toastSlide 0.25s ease-out forwards;
+    }
+    @keyframes toastSlide {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Hide scrollbar cleanly for horizontal tab strip on narrow screens */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen antialiased">
+
+  <!-- Prototype Control Ribbon (Role Switcher + Device/Embed Preview) -->
+  <div class="bg-slate-950 text-slate-200 border-b border-slate-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-sky-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Interactive Prototype
+        </span>
+        <span class="hidden md:inline text-slate-600">|</span>
+        <div class="inline-flex bg-slate-900 p-0.5 rounded-lg border border-slate-800" role="tablist" aria-label="Role Switcher">
+          <button type="button" data-action="switch-role" data-role="public" id="role-btn-public"
+            class="px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold transition">
+            Public / Dept
+          </button>
+          <button type="button" data-action="switch-role" data-role="instructor" id="role-btn-instructor"
+            class="px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold transition">
+            Instructor
+          </button>
+          <button type="button" data-action="switch-role" data-role="admin" id="role-btn-admin"
+            class="px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold transition flex items-center gap-1.5">
+            Admin
+            <span id="admin-badge" class="hidden px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:inline-flex bg-slate-900 p-0.5 rounded-lg border border-slate-800" aria-label="Viewport Preview">
+          <button type="button" data-action="switch-preview" data-preview="full" id="preview-btn-full"
+            class="px-2.5 py-1 rounded-md text-xs font-medium transition">
+            Full View
+          </button>
+          <button type="button" data-action="switch-preview" data-preview="mobile" id="preview-btn-mobile"
+            class="px-2.5 py-1 rounded-md text-xs font-medium transition">
+            Mobile (iOS/Android)
+          </button>
+          <button type="button" data-action="switch-preview" data-preview="embed" id="preview-btn-embed"
+            class="px-2.5 py-1 rounded-md text-xs font-medium transition">
+            Website Embed
+          </button>
+        </div>
+        <button type="button" data-action="open-embed-modal"
+          class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          &lt;/&gt; Embed Code
+        </button>
+        <button type="button" data-action="reset-demo"
+          class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+          title="Reset all demo data">
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional Website Embed Mock Wrapper -->
+  <div id="embed-host-banner" class="hidden max-w-6xl mx-auto px-4 pt-5">
+    <div class="bg-white border border-slate-200 rounded-t-2xl px-6 py-4 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-red-700 text-white font-extrabold text-sm flex items-center justify-center">MN</div>
+        <div>
+          <div class="text-sm font-bold text-slate-900">West Metro Fire Training Consortium</div>
+          <div class="text-xs text-slate-500">https://westmetrofiretraining.org/blue-card-portal &mdash; Embedded Portal Preview</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-medium text-slate-500">
+        <span>Training Calendar</span>
+        <span class="text-blue-700 font-semibold border-b-2 border-blue-700 pb-0.5">Blue Card &amp; CTC Portal</span>
+        <span>Resources</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App Shell (adapts to Full / Mobile / Embed) -->
+  <div id="app-frame" class="transition-all duration-200">
+    <!-- App Header -->
+    <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-900/40 shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-base sm:text-lg font-bold tracking-tight leading-tight">Blue Card &amp; CTC Asset Portal</h1>
+              <p id="header-subtitle" class="text-xs text-blue-200/90 mt-0.5">Public Self-Service &bull; Command Training Centers &amp; Initial Cert Labs</p>
+            </div>
+          </div>
+          <div id="header-role-pill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 border border-white/15 text-blue-100">
+          </div>
+        </div>
+
+        <!-- Sub-navigation Tabs -->
+        <nav id="sub-nav" class="mt-4 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5" aria-label="Portal sections">
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Content -->
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-6 pb-16">
+    </main>
+  </div>
+
+  <!-- Modal Backdrop & Container -->
+  <div id="modal-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
+    <div id="modal-panel" class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg my-auto overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between gap-3 bg-slate-50">
+        <h2 id="modal-title" class="text-base font-bold text-slate-900"></h2>
+        <button type="button" data-action="close-modal" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200/70 transition" aria-label="Close modal">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div id="modal-body" class="p-5 max-h-[75vh] overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- Toast Stack -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-[calc(100%-2rem)] pointer-events-none"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'bluecard_ctc_portal_v1';
+      const TODAY = '2026-11-18';
+
+      const DEFAULT_KIT_ITEMS = [
+        'Simulation Laptop & Blue Card Software',
+        '2x Incident Command Tablets',
+        '4x Training Portable Radios + Chargers',
+        'Portable Projector & HDMI Kit',
+        'Command Board & Dry-Erase Tactical Sheets',
+        'Hard Pelican Transport Case & Power Strip'
+      ];
+
+      const SAMPLE_INSTRUCTORS = [
+        { name: 'Capt. Sarah Jenkins', department: 'Minnetonka Fire', certId: 'BC-INST-4412' },
+        { name: 'BC Mike Torres', department: 'St. Louis Park Fire', certId: 'BC-INST-3189' },
+        { name: 'Lt. Dave Larson', department: 'Plymouth Fire', certId: 'BC-INST-5027' },
+        { name: 'Capt. Elena Brooks', department: 'Chanhassen Fire', certId: 'BC-INST-6104' }
+      ];
+
+      function getInitialState() {
+        return {
+          role: 'public',
+          preview: 'full',
+          activeTab: {
+            public: 'assets',
+            instructor: 'open-labs',
+            admin: 'pending-labs'
+          },
+          activeInstructor: {
+            name: 'Capt. Sarah Jenkins',
+            department: 'Minnetonka Fire',
+            certId: 'BC-INST-4412'
+          },
+          assets: [
+            {
+              id: 'CTC-1',
+              name: 'CTC-1 (Command Training Center in a Box)',
+              homeLocation: 'St. Louis Park Fire',
+              address: '3750 Wooddale Ave S, St. Louis Park, MN',
+              status: 'Available',
+              condition: 'Good',
+              currentCheckout: null,
+              kitItems: DEFAULT_KIT_ITEMS.slice(),
+              notes: 'Stored in Training Bay B locker. Self-service keybox access on file for mutual-aid departments.'
+            },
+            {
+              id: 'CTC-2',
+              name: 'CTC-2 (Command Training Center in a Box)',
+              homeLocation: 'Rogers Fire',
+              address: '21201 Memorial Dr, Rogers, MN',
+              status: 'Checked Out',
+              condition: 'Good',
+              currentCheckout: {
+                department: 'Maple Grove Fire',
+                contactName: 'Lt. Jordan Alvarez',
+                contactPhone: '(763) 555-0194',
+                checkedOutDate: '2026-11-17',
+                dueDate: '2026-11-20',
+                purpose: 'Company Officer Command Drill'
+              },
+              kitItems: DEFAULT_KIT_ITEMS.slice(),
+              notes: 'Stored in Station 1 Training Room. Includes spare radio battery pack.'
+            },
+            {
+              id: 'CTC-3',
+              name: 'CTC-3 (Command Training Center in a Box)',
+              homeLocation: 'Chanhassen Fire',
+              address: '7610 Laredo Dr, Chanhassen, MN',
+              status: 'Available',
+              condition: 'Good',
+              currentCheckout: null,
+              kitItems: DEFAULT_KIT_ITEMS.slice(),
+              notes: 'Stored in Station 1 Apparatus Bay Cabinet 3.'
+            }
+          ],
+          reservations: [
+            {
+              id: 'RES-1001',
+              assetId: 'CTC-1',
+              department: 'Plymouth Fire',
+              contactName: 'BC Kevin O\'Neal',
+              contactPhone: '(763) 555-0148',
+              startDate: '2026-12-07',
+              endDate: '2026-12-09',
+              purpose: 'Blue Card Initial Certification Lab (8 students)',
+              linkedLabId: 'LAB-201',
+              status: 'Confirmed'
+            },
+            {
+              id: 'RES-1002',
+              assetId: 'CTC-3',
+              department: 'Eden Prairie Fire',
+              contactName: 'Capt. Rachel Kim',
+              contactPhone: '(952) 555-0182',
+              startDate: '2026-12-14',
+              endDate: '2026-12-16',
+              purpose: 'Blue Card Initial Certification Lab (10 students)',
+              linkedLabId: 'LAB-202',
+              status: 'Confirmed'
+            }
+          ],
+          labs: [
+            {
+              id: 'LAB-201',
+              department: 'Plymouth Fire',
+              hostFacility: 'Plymouth Fire Station 1 Training Center',
+              contactName: 'BC Kevin O\'Neal',
+              contactEmail: 'koneal@plymouthfire.example.org',
+              contactPhone: '(763) 555-0148',
+              startDate: '2026-12-07',
+              endDate: '2026-12-09',
+              studentCount: 8,
+              preferredAssetId: 'CTC-1',
+              reservedAssetId: 'CTC-1',
+              status: 'Confirmed',
+              instructors: [
+                { name: 'BC Mike Torres', department: 'St. Louis Park Fire', certId: 'BC-INST-3189' },
+                { name: 'Lt. Dave Larson', department: 'Plymouth Fire', certId: 'BC-INST-5027' }
+              ],
+              notes: '3-day initial certification lab. Classroom + 2 breakout bays reserved.'
+            },
+            {
+              id: 'LAB-202',
+              department: 'Eden Prairie Fire',
+              hostFacility: 'Eden Prairie Fire Station 1 Classroom',
+              contactName: 'Capt. Rachel Kim',
+              contactEmail: 'rkim@epfire.example.org',
+              contactPhone: '(952) 555-0182',
+              startDate: '2026-12-14',
+              endDate: '2026-12-16',
+              studentCount: 10,
+              preferredAssetId: 'CTC-3',
+              reservedAssetId: 'CTC-3',
+              status: 'Confirmed',
+              instructors: [
+                { name: 'Capt. Elena Brooks', department: 'Chanhassen Fire', certId: 'BC-INST-6104' }
+              ],
+              notes: '10 candidates completing online modules by Dec 10. Need 2 additional instructors.'
+            },
+            {
+              id: 'LAB-203',
+              department: 'Minnetonka Fire',
+              hostFacility: 'Minnetonka Fire Station 1 — Training Room A',
+              contactName: 'DC Marcus Vance',
+              contactEmail: 'mvance@minnetonkafire.example.org',
+              contactPhone: '(952) 555-0133',
+              startDate: '2026-12-21',
+              endDate: '2026-12-23',
+              studentCount: 12,
+              preferredAssetId: 'CTC-1',
+              reservedAssetId: null,
+              status: 'Pending Confirmation',
+              instructors: [],
+              notes: 'Full cohort of 12 new lieutenants & acting officers. Confirming will auto-reserve a CTC.'
+            }
+          ],
+          activityLog: [
+            {
+              id: 'ACT-1',
+              timestamp: '2026-11-17 08:15',
+              type: 'checkout',
+              message: 'CTC-2 (Rogers Fire) checked out by Lt. Jordan Alvarez (Maple Grove Fire) — due 2026-11-20.'
+            },
+            {
+              id: 'ACT-2',
+              timestamp: '2026-11-16 14:30',
+              type: 'lab',
+              message: 'LAB-203 requested by Minnetonka Fire (12 students, Dec 21–23). Awaiting confirmation.'
+            },
+            {
+              id: 'ACT-3',
+              timestamp: '2026-11-14 10:05',
+              type: 'reserve',
+              message: 'LAB-202 confirmed — CTC-3 (Chanhassen Fire) auto-reserved for Dec 14–16.'
+            }
+          ]
+        };
+      }
+
+      let state = loadState();
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && Array.isArray(parsed.assets) && Array.isArray(parsed.labs)) {
+              return parsed;
+            }
+          }
+        } catch (e) {
+          // Safe fallback in restricted iframe storage
+        }
+        return getInitialState();
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+          // Ignore storage quota / sandbox restrictions
+        }
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function requiredInstructors(studentCount) {
+        const count = Math.max(1, Math.min(12, parseInt(studentCount, 10) || 1));
+        return Math.ceil(count / 4);
+      }
+
+      function formatDateShort(iso) {
+        if (!iso) return '—';
+        const parts = iso.split('-');
+        if (parts.length !== 3) return iso;
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const m = parseInt(parts[1], 10) - 1;
+        const d = parseInt(parts[2], 10);
+        return (months[m] || parts[1]) + ' ' + d + ', ' + parts[0];
+      }
+
+      function formatRange(start, end) {
+        if (!start) return '—';
+        if (!end || start === end) return formatDateShort(start);
+        const s = start.split('-');
+        const e = end.split('-');
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        if (s[0] === e[0] && s[1] === e[1]) {
+          return months[parseInt(s[1], 10) - 1] + ' ' + parseInt(s[2], 10) + '–' + parseInt(e[2], 10) + ', ' + s[0];
+        }
+        return formatDateShort(start) + ' – ' + formatDateShort(end);
+      }
+
+      function datesOverlap(startA, endA, startB, endB) {
+        return startA <= endB && startB <= endA;
+      }
+
+      function getAssetById(id) {
+        return state.assets.find(a => a.id === id) || null;
+      }
+
+      function getAssetConflicts(assetId, startDate, endDate) {
+        const conflicts = [];
+        const asset = getAssetById(assetId);
+        if (asset && asset.status === 'Checked Out' && asset.currentCheckout) {
+          if (datesOverlap(startDate, endDate, asset.currentCheckout.checkedOutDate, asset.currentCheckout.dueDate)) {
+            conflicts.push({
+              label: 'Checked out by ' + asset.currentCheckout.department,
+              dates: formatRange(asset.currentCheckout.checkedOutDate, asset.currentCheckout.dueDate)
+            });
+          }
+        }
+        state.reservations
+          .filter(r => r.assetId === assetId && r.status === 'Confirmed')
+          .forEach(r => {
+            if (datesOverlap(startDate, endDate, r.startDate, r.endDate)) {
+              conflicts.push({
+                label: 'Reserved for ' + r.department,
+                dates: formatRange(r.startDate, r.endDate)
+              });
+            }
+          });
+        return conflicts;
+      }
+
+      function findAvailableAssetForDates(startDate, endDate, preferredId) {
+        if (preferredId) {
+          const pref = getAssetById(preferredId);
+          if (pref && pref.status !== 'Needs Inspection' && getAssetConflicts(pref.id, startDate, endDate).length === 0) {
+            return pref;
+          }
+        }
+        for (const asset of state.assets) {
+          if (asset.status !== 'Needs Inspection' && getAssetConflicts(asset.id, startDate, endDate).length === 0) {
+            return asset;
+          }
+        }
+        return null;
+      }
+
+      function logActivity(type, message) {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        state.activityLog.unshift({
+          id: 'ACT-' + Date.now(),
+          timestamp: TODAY + ' ' + hh + ':' + mm,
+          type,
+          message
+        });
+      }
+
+      function showToast(message, tone) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const colors = {
+          success: 'bg-emerald-900 text-emerald-50 border-emerald-700',
+          info: 'bg-slate-900 text-white border-slate-700',
+          warning: 'bg-amber-900 text-amber-50 border-amber-700',
+          error: 'bg-rose-900 text-rose-50 border-rose-700'
+        };
+        const el = document.createElement('div');
+        el.className = 'toast-enter pointer-events-auto px-4 py-3 rounded-xl border shadow-lg text-sm font-medium flex items-start justify-between gap-3 ' + (colors[tone] || colors.info);
+        el.innerHTML = '<span>' + escapeHtml(message) + '</span>';
+        container.appendChild(el);
+        setTimeout(() => {
+          el.style.opacity = '0';
+          el.style.transition = 'opacity 0.25s ease';
+          setTimeout(() => el.remove(), 260);
+        }, 3800);
+      }
+
+      function openModal(title, bodyHtml) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-body').innerHTML = bodyHtml;
+        const overlay = document.getElementById('modal-overlay');
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+      }
+
+      function closeModal() {
+        const overlay = document.getElementById('modal-overlay');
+        overlay.classList.add('hidden');
+        overlay.classList.remove('flex');
+      }
+
+      function statusBadge(status) {
+        const map = {
+          'Available': 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20',
+          'Checked Out': 'bg-blue-50 text-blue-700 ring-1 ring-blue-600/20',
+          'Needs Inspection': 'bg-rose-50 text-rose-700 ring-1 ring-rose-600/20',
+          'Confirmed': 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20',
+          'Pending Confirmation': 'bg-amber-50 text-amber-800 ring-1 ring-amber-600/25',
+          'Declined': 'bg-slate-100 text-slate-600 ring-1 ring-slate-300'
+        };
+        const dot = {
+          'Available': 'bg-emerald-500',
+          'Checked Out': 'bg-blue-500',
+          'Needs Inspection': 'bg-rose-500',
+          'Confirmed': 'bg-emerald-500',
+          'Pending Confirmation': 'bg-amber-500',
+          'Declined': 'bg-slate-400'
+        };
+        return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ' + (map[status] || 'bg-slate-100 text-slate-700') + '">' +
+          '<span class="w-1.5 h-1.5 rounded-full ' + (dot[status] || 'bg-slate-400') + '"></span>' +
+          escapeHtml(status) + '</span>';
+      }
+
+      // ---------- RENDER SHELL ----------
+      function render() {
+        saveState();
+        updateTopBar();
+        updateHeader();
+        renderMain();
+      }
+
+      function updateTopBar() {
+        ['public', 'instructor', 'admin'].forEach(r => {
+          const btn = document.getElementById('role-btn-' + r);
+          if (!btn) return;
+          if (state.role === r) {
+            btn.className = 'px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white shadow-sm transition flex items-center gap-1.5';
+          } else {
+            btn.className = 'px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5';
+          }
+        });
+
+        const pendingCount = state.labs.filter(l => l.status === 'Pending Confirmation').length;
+        const badge = document.getElementById('admin-badge');
+        if (badge) {
+          if (pendingCount > 0) {
+            badge.textContent = String(pendingCount);
+            badge.classList.remove('hidden');
+          } else {
+            badge.classList.add('hidden');
+          }
+        }
+
+        ['full', 'mobile', 'embed'].forEach(p => {
+          const btn = document.getElementById('preview-btn-' + p);
+          if (!btn) return;
+          btn.className = state.preview === p
+            ? 'px-2.5 py-1 rounded-md text-xs font-medium bg-slate-700 text-white transition'
+            : 'px-2.5 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition';
+        });
+
+        const frame = document.getElementById('app-frame');
+        const hostBanner = document.getElementById('embed-host-banner');
+        frame.className = 'transition-all duration-200';
+        hostBanner.classList.add('hidden');
+
+        if (state.preview === 'mobile') {
+          frame.className = 'preview-mobile-shell';
+        } else if (state.preview === 'embed') {
+          hostBanner.classList.remove('hidden');
+          frame.className = 'preview-embed-shell rounded-t-none border-t-0 mt-0';
+        }
+      }
+
+      function updateHeader() {
+        const sub = document.getElementById('header-subtitle');
+        const pill = document.getElementById('header-role-pill');
+        const nav = document.getElementById('sub-nav');
+
+        const configs = {
+          public: {
+            subtitle: 'Public Self-Service • Track, Reserve, Check Out & Return CTC Kits • Request Blue Card Labs',
+            pill: 'Public / Department Portal',
+            tabs: [
+              { id: 'assets', label: 'CTC Assets (' + state.assets.length + ')' },
+              { id: 'request-lab', label: 'Request Blue Card Lab' },
+              { id: 'schedule', label: 'Schedule & Reservations' }
+            ]
+          },
+          instructor: {
+            subtitle: 'Blue Card Instructor Portal • Sign Up to Teach Confirmed Labs (4:1 Ratio, Max 12 Students)',
+            pill: 'Instructor: ' + state.activeInstructor.name,
+            tabs: [
+              { id: 'open-labs', label: 'Open Lab Signups' },
+              { id: 'my-classes', label: 'My Teaching Schedule' }
+            ]
+          },
+          admin: {
+            subtitle: 'Coordinator Admin • Confirm Labs (Auto-Reserves CTC), Manage Fleet & Activity Log',
+            pill: 'Admin Coordinator',
+            tabs: [
+              { id: 'pending-labs', label: 'Lab Requests & Staffing' },
+              { id: 'fleet', label: 'Fleet & Activity Log' }
+            ]
+          }
+        };
+
+        const cfg = configs[state.role];
+        sub.textContent = cfg.subtitle;
+        pill.textContent = cfg.pill;
+
+        const currentTab = state.activeTab[state.role];
+        nav.innerHTML = cfg.tabs.map(t => {
+          const active = t.id === currentTab;
+          return '<button type="button" data-action="switch-tab" data-tab="' + t.id + '" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ' +
+            (active ? 'bg-white text-slate-900 shadow-sm' : 'text-blue-100/80 hover:text-white hover:bg-white/10') + '">' +
+            escapeHtml(t.label) + '</button>';
+        }).join('');
+      }
+
+      function renderMain() {
+        const main = document.getElementById('main-content');
+        const tab = state.activeTab[state.role];
+
+        if (state.role === 'public') {
+          if (tab === 'assets') main.innerHTML = renderPublicAssets();
+          else if (tab === 'request-lab') main.innerHTML = renderLabRequestForm();
+          else main.innerHTML = renderPublicSchedule();
+        } else if (state.role === 'instructor') {
+          main.innerHTML = renderInstructorPortal(tab);
+        } else {
+          if (tab === 'pending-labs') main.innerHTML = renderAdminLabs();
+          else main.innerHTML = renderAdminFleet();
+        }
+      }
+
+      // ---------- PUBLIC: ASSETS ----------
+      function renderPublicAssets() {
+        const availCount = state.assets.filter(a => a.status === 'Available').length;
+        const outCount = state.assets.filter(a => a.status === 'Checked Out').length;
+        const upcomingRes = state.reservations.filter(r => r.status === 'Confirmed').length;
+
+        const gridClass = state.preview === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3';
+
+        return `
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <div>
+              <h2 class="text-lg sm:text-xl font-bold text-slate-900">Command Training Centers in a Box (CTCs)</h2>
+              <p class="text-sm text-slate-600">Instant self-service booking, checkout, and return whenever a unit is available.</p>
+            </div>
+            <button type="button" data-action="switch-tab" data-tab="request-lab"
+              class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-sm transition">
+              + Request Blue Card Lab
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs">
+              <div class="text-xs font-medium text-slate-500">Available Now</div>
+              <div class="text-2xl font-extrabold text-emerald-600 mt-0.5">${availCount} <span class="text-sm font-medium text-slate-400">/ ${state.assets.length}</span></div>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs">
+              <div class="text-xs font-medium text-slate-500">Checked Out</div>
+              <div class="text-2xl font-extrabold text-blue-600 mt-0.5">${outCount}</div>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs">
+              <div class="text-xs font-medium text-slate-500">Upcoming Bookings</div>
+              <div class="text-2xl font-extrabold text-slate-800 mt-0.5">${upcomingRes}</div>
+            </div>
+          </div>
+
+          <div class="grid ${gridClass} gap-4">
+            ${state.assets.map(asset => {
+              const assetRes = state.reservations
+                .filter(r => r.assetId === asset.id && r.status === 'Confirmed')
+                .sort((a, b) => a.startDate.localeCompare(b.startDate));
+              const nextRes = assetRes[0] || null;
+
+              return `
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between overflow-hidden">
+                  <div class="p-5">
+                    <div class="flex items-start justify-between gap-2 mb-3">
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white">${escapeHtml(asset.id)}</span>
+                      ${statusBadge(asset.status)}
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 leading-snug">${escapeHtml(asset.homeLocation)}</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">${escapeHtml(asset.address)}</p>
+
+                    ${asset.status === 'Checked Out' && asset.currentCheckout ? `
+                      <div class="mt-4 p-3 rounded-xl bg-blue-50/80 border border-blue-100 text-xs">
+                        <div class="font-semibold text-blue-900">Checked out to ${escapeHtml(asset.currentCheckout.department)}</div>
+                        <div class="text-blue-800/90 mt-0.5">${escapeHtml(asset.currentCheckout.contactName)} &bull; Due ${escapeHtml(formatDateShort(asset.currentCheckout.dueDate))}</div>
+                        <div class="text-blue-700/80 mt-0.5">${escapeHtml(asset.currentCheckout.purpose)}</div>
+                      </div>
+                    ` : asset.status === 'Needs Inspection' ? `
+                      <div class="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800">
+                        <div class="font-semibold">Flagged on return for inspection</div>
+                        <div class="mt-0.5">${escapeHtml(asset.notes)}</div>
+                      </div>
+                    ` : `
+                      <div class="mt-4 p-3 rounded-xl bg-emerald-50/70 border border-emerald-100 text-xs text-emerald-900">
+                        <div class="font-semibold">Ready for instant pickup or reservation</div>
+                        <div class="text-emerald-800/80 mt-0.5">${escapeHtml(asset.notes)}</div>
+                      </div>
+                    `}
+
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                      <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Upcoming Reservations (${assetRes.length})</div>
+                      ${nextRes ? `
+                        <div class="space-y-1.5">
+                          ${assetRes.slice(0, 2).map(r => `
+                            <div class="text-xs flex items-center justify-between gap-2 bg-slate-50 rounded-lg px-2.5 py-1.5 border border-slate-100">
+                              <span class="font-medium text-slate-800 truncate">${escapeHtml(r.department)}${r.linkedLabId ? ' <span class="text-blue-600">(Lab)</span>' : ''}</span>
+                              <span class="text-slate-500 whitespace-nowrap">${escapeHtml(formatRange(r.startDate, r.endDate))}</span>
+                            </div>
+                          `).join('')}
+                        </div>
+                      ` : `<div class="text-xs text-slate-400 italic">No upcoming dates reserved</div>`}
+                    </div>
+                  </div>
+
+                  <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                    ${asset.status === 'Available' ? `
+                      <button type="button" data-action="open-checkout-modal" data-asset-id="${escapeHtml(asset.id)}"
+                        class="flex-1 px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition text-center">
+                        Check Out Now
+                      </button>
+                      <button type="button" data-action="open-reserve-modal" data-asset-id="${escapeHtml(asset.id)}"
+                        class="flex-1 px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold transition text-center">
+                        Reserve Dates
+                      </button>
+                    ` : asset.status === 'Checked Out' ? `
+                      <button type="button" data-action="open-return-modal" data-asset-id="${escapeHtml(asset.id)}"
+                        class="flex-1 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition text-center">
+                        Return Asset
+                      </button>
+                      <button type="button" data-action="open-reserve-modal" data-asset-id="${escapeHtml(asset.id)}"
+                        class="flex-1 px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold transition text-center">
+                        Reserve Future Dates
+                      </button>
+                    ` : `
+                      <button type="button" data-action="open-asset-details" data-asset-id="${escapeHtml(asset.id)}"
+                        class="flex-1 px-3 py-2 rounded-xl bg-rose-100 text-rose-800 text-xs font-semibold text-center">
+                        Inspection Pending (Admin)
+                      </button>
+                    `}
+                    <button type="button" data-action="open-asset-details" data-asset-id="${escapeHtml(asset.id)}"
+                      class="px-3 py-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 text-xs font-medium transition">
+                      Kit Info
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      // ---------- PUBLIC: REQUEST BLUE CARD LAB ----------
+      function renderLabRequestForm() {
+        const defaultStudents = 8;
+        const reqInst = requiredInstructors(defaultStudents);
+
+        return `
+          <div class="max-w-2xl mx-auto">
+            <div class="mb-5">
+              <h2 class="text-lg sm:text-xl font-bold text-slate-900">Request a Blue Card Initial Certification Lab</h2>
+              <p class="text-sm text-slate-600 mt-1">
+                Submit your host details below. Labs are capped at <strong>12 students</strong> with a <strong>4:1 student-to-instructor ratio</strong>.
+                Once confirmed, the system <strong>automatically reserves an available CTC</strong> for your class dates and opens instructor signup slots.
+              </p>
+            </div>
+
+            <form id="lab-request-form" class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-dept">Requesting Department / Agency *</label>
+                  <input id="lab-dept" name="department" type="text" required placeholder="e.g., Edina Fire Department"
+                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-facility">Host Facility / Training Location *</label>
+                  <input id="lab-facility" name="hostFacility" type="text" required placeholder="e.g., Edina Fire Station 1 Classroom"
+                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-contact">Contact Name *</label>
+                  <input id="lab-contact" name="contactName" type="text" required placeholder="Capt. Alex Morgan"
+                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-email">Contact Email *</label>
+                  <input id="lab-email" name="contactEmail" type="email" required placeholder="amorgan@dept.org"
+                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-phone">Phone *</label>
+                  <input id="lab-phone" name="contactPhone" type="tel" required placeholder="(952) 555-0140"
+                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-start">Class Start Date *</label>
+                  <input id="lab-start" name="startDate" type="date" required value="2026-12-28" min="${TODAY}"
+                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-end">Class End Date *</label>
+                  <input id="lab-end" name="endDate" type="date" required value="2026-12-30" min="${TODAY}"
+                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <label class="text-xs font-bold text-blue-950" for="lab-students">Estimated Student Count (Max 12)</label>
+                  <span id="ratio-pill" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-600 text-white">
+                    ${defaultStudents} Students &rarr; ${reqInst} Instructors Needed (4:1)
+                  </span>
+                </div>
+                <input id="lab-students" name="studentCount" type="range" min="1" max="12" value="${defaultStudents}"
+                  class="w-full accent-blue-600 cursor-pointer" />
+                <div class="flex justify-between text-[11px] text-blue-900/70 font-medium mt-1">
+                  <span>1–4 students (1 inst)</span>
+                  <span>5–8 students (2 inst)</span>
+                  <span>9–12 students (3 inst max)</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-pref-ctc">Preferred CTC Pickup Location (Auto-Reserved on Confirmation)</label>
+                <select id="lab-pref-ctc" name="preferredAssetId"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">Auto-assign any available CTC</option>
+                  ${state.assets.map(a => `<option value="${escapeHtml(a.id)}">${escapeHtml(a.id)} — ${escapeHtml(a.homeLocation)}</option>`).join('')}
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="lab-notes">Additional Notes (Optional)</label>
+                <textarea id="lab-notes" name="notes" rows="2" placeholder="Classroom access instructions, breakout room availability, or shift constraints..."
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+              </div>
+
+              <div class="pt-2 flex flex-wrap items-center justify-between gap-3">
+                <span class="text-xs text-slate-500">Tip: After submitting, switch to <strong>Admin</strong> to confirm &amp; watch the CTC auto-reserve.</span>
+                <button type="submit"
+                  class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-sm transition">
+                  Submit Lab Request
+                </button>
+              </div>
+            </form>
+          </div>
+        `;
+      }
+
+      // ---------- PUBLIC: SCHEDULE ----------
+      function renderPublicSchedule() {
+        const sortedRes = state.reservations
+          .filter(r => r.status === 'Confirmed')
+          .sort((a, b) => a.startDate.localeCompare(b.startDate));
+        const sortedLabs = state.labs.slice().sort((a, b) => a.startDate.localeCompare(b.startDate));
+
+        return `
+          <div class="space-y-6">
+            <div>
+              <h2 class="text-lg sm:text-xl font-bold text-slate-900">Upcoming Blue Card Labs &amp; CTC Reservations</h2>
+              <p class="text-sm text-slate-600">Check booked dates across St. Louis Park, Rogers, and Chanhassen CTCs before reserving.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+              <div class="px-5 py-3.5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-900">Blue Card Initial Certification Labs</h3>
+                <span class="text-xs text-slate-500">${sortedLabs.length} total</span>
+              </div>
+              <div class="divide-y divide-slate-100">
+                ${sortedLabs.map(lab => {
+                  const needed = requiredInstructors(lab.studentCount);
+                  const filled = lab.instructors.length;
+                  const asset = lab.reservedAssetId ? getAssetById(lab.reservedAssetId) : null;
+                  return `
+                    <div class="p-4 sm:px-5 flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="text-sm font-bold text-slate-900">${escapeHtml(lab.department)}</span>
+                          ${statusBadge(lab.status)}
+                        </div>
+                        <div class="text-xs text-slate-600 mt-1">
+                          ${escapeHtml(formatRange(lab.startDate, lab.endDate))} &bull; ${escapeHtml(lab.hostFacility)}
+                        </div>
+                        <div class="text-xs text-slate-500 mt-0.5">
+                          ${lab.studentCount} students &bull; Instructors: <strong>${filled}/${needed}</strong>
+                          ${asset ? ' &bull; Auto-reserved: <strong class="text-blue-700">' + escapeHtml(asset.id + ' (' + asset.homeLocation + ')') + '</strong>' : ' &bull; CTC pending confirmation'}
+                        </div>
+                      </div>
+                      <span class="text-xs font-mono text-slate-400">${escapeHtml(lab.id)}</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+              <div class="px-5 py-3.5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-900">Confirmed CTC Asset Reservations</h3>
+                <span class="text-xs text-slate-500">${sortedRes.length} active</span>
+              </div>
+              <div class="divide-y divide-slate-100">
+                ${sortedRes.length ? sortedRes.map(r => {
+                  const asset = getAssetById(r.assetId);
+                  return `
+                    <div class="p-4 sm:px-5 flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-slate-900 text-white">${escapeHtml(r.assetId)}</span>
+                          <span class="text-sm font-semibold text-slate-900">${escapeHtml(asset ? asset.homeLocation : r.assetId)}</span>
+                          ${r.linkedLabId ? '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">Auto-Reserved for ' + escapeHtml(r.linkedLabId) + '</span>' : ''}
+                        </div>
+                        <div class="text-xs text-slate-600 mt-1">
+                          Reserved by <strong>${escapeHtml(r.department)}</strong> (${escapeHtml(r.contactName)}) &mdash; ${escapeHtml(r.purpose)}
+                        </div>
+                      </div>
+                      <div class="text-xs font-semibold text-slate-800 bg-slate-100 px-3 py-1.5 rounded-lg">
+                        ${escapeHtml(formatRange(r.startDate, r.endDate))}
+                      </div>
+                    </div>
+                  `;
+                }).join('') : '<div class="p-6 text-center text-sm text-slate-500">No active reservations yet.</div>'}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------- INSTRUCTOR PORTAL ----------
+      function renderInstructorPortal(tab) {
+        const confirmedLabs = state.labs
+          .filter(l => l.status === 'Confirmed')
+          .sort((a, b) => a.startDate.localeCompare(b.startDate));
+
+        const myName = state.activeInstructor.name;
+        const visibleLabs = tab === 'my-classes'
+          ? confirmedLabs.filter(l => l.instructors.some(i => i.name === myName))
+          : confirmedLabs;
+
+        return `
+          <div class="space-y-5">
+            <!-- Active Instructor Selector -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Signed in as Certified Blue Card Instructor</div>
+                <div class="text-sm font-bold text-slate-900 mt-0.5">${escapeHtml(state.activeInstructor.name)} <span class="font-normal text-slate-500">(${escapeHtml(state.activeInstructor.department)} &bull; ${escapeHtml(state.activeInstructor.certId)})</span></div>
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="instructor-switcher" class="text-xs font-medium text-slate-500">Test as:</label>
+                <select id="instructor-switcher" data-action="change-instructor"
+                  class="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  ${SAMPLE_INSTRUCTORS.map(inst => `
+                    <option value="${escapeHtml(inst.name)}" ${inst.name === myName ? 'selected' : ''}>${escapeHtml(inst.name)} (${escapeHtml(inst.department)})</option>
+                  `).join('')}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <h2 class="text-lg sm:text-xl font-bold text-slate-900">${tab === 'my-classes' ? 'My Teaching Schedule' : 'Confirmed Blue Card Labs — Instructor Signups'}</h2>
+              <p class="text-sm text-slate-600">Staffed at a <strong>4:1 student-to-instructor ratio</strong> (1–4 students: 1 instructor, 5–8: 2 instructors, 9–12: 3 instructors).</p>
+            </div>
+
+            ${visibleLabs.length === 0 ? `
+              <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center">
+                <p class="text-sm font-semibold text-slate-800">${tab === 'my-classes' ? 'You have not signed up to teach any labs yet.' : 'No confirmed labs right now.'}</p>
+                <p class="text-xs text-slate-500 mt-1">${tab === 'my-classes' ? 'Switch to Open Lab Signups to claim an open instructor slot.' : 'Confirm a pending lab in the Admin portal to open instructor slots.'}</p>
+              </div>
+            ` : `
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                ${visibleLabs.map(lab => {
+                  const needed = requiredInstructors(lab.studentCount);
+                  const filled = lab.instructors.length;
+                  const pct = Math.min(100, Math.round((filled / needed) * 100));
+                  const isSignedUp = lab.instructors.some(i => i.name === myName);
+                  const isFull = filled >= needed;
+                  const asset = lab.reservedAssetId ? getAssetById(lab.reservedAssetId) : null;
+
+                  return `
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col justify-between gap-4">
+                      <div>
+                        <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+                          <div>
+                            <div class="text-xs font-semibold text-blue-700">${escapeHtml(formatRange(lab.startDate, lab.endDate))}</div>
+                            <h3 class="text-base font-bold text-slate-900 mt-0.5">${escapeHtml(lab.department)} &mdash; Initial Cert Lab</h3>
+                          </div>
+                          ${isFull
+                            ? '<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20">Fully Staffed</span>'
+                            : '<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 ring-1 ring-amber-600/25">Needs ' + (needed - filled) + ' Instructor' + (needed - filled > 1 ? 's' : '') + '</span>'}
+                        </div>
+
+                        <div class="text-xs text-slate-600 space-y-1 mt-2">
+                          <div><strong>Host Facility:</strong> ${escapeHtml(lab.hostFacility)}</div>
+                          <div><strong>Cohort Size:</strong> ${lab.studentCount} students (max 12) &bull; <strong>Ratio:</strong> 4:1 (${needed} instructor${needed > 1 ? 's' : ''} required)</div>
+                          <div><strong>Reserved CTC:</strong> ${asset ? '<span class="text-blue-700 font-semibold">' + escapeHtml(asset.id + ' — ' + asset.homeLocation) + '</span>' : 'None assigned'}</div>
+                          ${lab.notes ? '<div class="text-slate-500 pt-1">' + escapeHtml(lab.notes) + '</div>' : ''}
+                        </div>
+
+                        <!-- Staffing Progress -->
+                        <div class="mt-4">
+                          <div class="flex items-center justify-between text-xs font-semibold mb-1">
+                            <span class="text-slate-700">Instructor Roster</span>
+                            <span class="${isFull ? 'text-emerald-700' : 'text-amber-700'}">${filled} / ${needed} Filled</span>
+                          </div>
+                          <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                            <div class="h-full rounded-full ${isFull ? 'bg-emerald-500' : 'bg-blue-600'} transition-all" style="width:${pct}%"></div>
+                          </div>
+                          <div class="mt-2.5 flex flex-wrap gap-1.5">
+                            ${lab.instructors.length ? lab.instructors.map(inst => `
+                              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium ${inst.name === myName ? 'bg-blue-100 text-blue-900 border border-blue-300' : 'bg-slate-100 text-slate-700'}">
+                                ${escapeHtml(inst.name)} <span class="text-[11px] opacity-70">(${escapeHtml(inst.department)})</span>
+                              </span>
+                            `).join('') : '<span class="text-xs text-slate-400 italic">No instructors signed up yet — be the first!</span>'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <span class="text-xs text-slate-500">Contact: ${escapeHtml(lab.contactName)}</span>
+                        ${isSignedUp ? `
+                          <button type="button" data-action="toggle-instructor-signup" data-lab-id="${escapeHtml(lab.id)}"
+                            class="px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition">
+                            Withdraw from Class
+                          </button>
+                        ` : isFull ? `
+                          <button type="button" disabled
+                            class="px-4 py-2 rounded-xl bg-slate-100 text-slate-400 text-xs font-semibold cursor-not-allowed">
+                            Roster Full
+                          </button>
+                        ` : `
+                          <button type="button" data-action="toggle-instructor-signup" data-lab-id="${escapeHtml(lab.id)}"
+                            class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition">
+                            Sign Up to Teach
+                          </button>
+                        `}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            `}
+          </div>
+        `;
+      }
+
+      // ---------- ADMIN: LAB REQUESTS ----------
+      function renderAdminLabs() {
+        const pending = state.labs.filter(l => l.status === 'Pending Confirmation');
+        const confirmed = state.labs.filter(l => l.status === 'Confirmed');
+        const openSlots = confirmed.reduce((sum, l) => sum + Math.max(0, requiredInstructors(l.studentCount) - l.instructors.length), 0);
+        const availCount = state.assets.filter(a => a.status === 'Available').length;
+
+        return `
+          <div class="space-y-6">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs">
+                <div class="text-xs font-medium text-slate-500">Pending Lab Requests</div>
+                <div class="text-2xl font-extrabold text-amber-600 mt-0.5">${pending.length}</div>
+              </div>
+              <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs">
+                <div class="text-xs font-medium text-slate-500">Confirmed Labs</div>
+                <div class="text-2xl font-extrabold text-emerald-600 mt-0.5">${confirmed.length}</div>
+              </div>
+              <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs">
+                <div class="text-xs font-medium text-slate-500">Open Instructor Slots</div>
+                <div class="text-2xl font-extrabold text-blue-600 mt-0.5">${openSlots}</div>
+              </div>
+              <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs">
+                <div class="text-xs font-medium text-slate-500">Available CTCs</div>
+                <div class="text-2xl font-extrabold text-slate-900 mt-0.5">${availCount} / ${state.assets.length}</div>
+              </div>
+            </div>
+
+            <!-- Pending Queue -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+              <div class="px-5 py-3.5 bg-amber-50/70 border-b border-amber-200/80 flex items-center justify-between">
+                <div>
+                  <h2 class="text-sm font-bold text-slate-900">Pending Blue Card Lab Requests</h2>
+                  <p class="text-xs text-slate-600">Confirming a lab automatically reserves an available CTC for the class dates and opens instructor signups.</p>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-200 text-amber-950">${pending.length} pending</span>
+              </div>
+
+              <div class="divide-y divide-slate-100">
+                ${pending.length === 0 ? `
+                  <div class="p-6 text-center text-sm text-slate-500">All lab requests have been reviewed. Submit a new request from the Public portal to test auto-reservation.</div>
+                ` : pending.map(lab => {
+                  const needed = requiredInstructors(lab.studentCount);
+                  const autoCandidate = findAvailableAssetForDates(lab.startDate, lab.endDate, lab.preferredAssetId);
+                  return `
+                    <div class="p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div class="space-y-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="text-base font-bold text-slate-900">${escapeHtml(lab.department)}</span>
+                          ${statusBadge(lab.status)}
+                          <span class="text-xs font-mono text-slate-400">${escapeHtml(lab.id)}</span>
+                        </div>
+                        <div class="text-xs text-slate-700">
+                          <strong>Dates:</strong> ${escapeHtml(formatRange(lab.startDate, lab.endDate))} &bull;
+                          <strong>Host:</strong> ${escapeHtml(lab.hostFacility)}
+                        </div>
+                        <div class="text-xs text-slate-600">
+                          <strong>Students:</strong> ${lab.studentCount} (requires ${needed} instructor${needed > 1 ? 's' : ''} at 4:1) &bull;
+                          <strong>Contact:</strong> ${escapeHtml(lab.contactName)} (${escapeHtml(lab.contactPhone)})
+                        </div>
+                        ${lab.notes ? `<div class="text-xs text-slate-500 italic">"${escapeHtml(lab.notes)}"</div>` : ''}
+                        <div class="pt-1">
+                          ${autoCandidate ? `
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                              Auto-reserve ready: ${escapeHtml(autoCandidate.id)} (${escapeHtml(autoCandidate.homeLocation)}) is open for these dates
+                            </span>
+                          ` : `
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200">
+                              All CTCs have a booking conflict for these dates
+                            </span>
+                          `}
+                        </div>
+                      </div>
+
+                      <div class="flex flex-wrap items-center gap-2 shrink-0">
+                        <button type="button" data-action="confirm-lab" data-lab-id="${escapeHtml(lab.id)}"
+                          class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition">
+                          Confirm &amp; Auto-Reserve CTC
+                        </button>
+                        <button type="button" data-action="decline-lab" data-lab-id="${escapeHtml(lab.id)}"
+                          class="px-3.5 py-2 rounded-xl bg-white hover:bg-rose-50 text-rose-700 border border-slate-300 text-xs font-semibold transition">
+                          Decline
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- Confirmed Labs Overview -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+              <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200">
+                <h2 class="text-sm font-bold text-slate-900">Confirmed Labs &amp; Instructor Staffing</h2>
+              </div>
+              <div class="divide-y divide-slate-100">
+                ${confirmed.map(lab => {
+                  const needed = requiredInstructors(lab.studentCount);
+                  const filled = lab.instructors.length;
+                  const asset = lab.reservedAssetId ? getAssetById(lab.reservedAssetId) : null;
+                  return `
+                    <div class="p-4 sm:px-5 flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <div class="text-sm font-bold text-slate-900">${escapeHtml(lab.department)} <span class="font-normal text-slate-500">&mdash; ${escapeHtml(formatRange(lab.startDate, lab.endDate))}</span></div>
+                        <div class="text-xs text-slate-600 mt-0.5">
+                          ${escapeHtml(lab.hostFacility)} &bull; ${lab.studentCount} students &bull;
+                          Reserved CTC: <strong class="text-blue-700">${asset ? escapeHtml(asset.id + ' (' + asset.homeLocation + ')') : 'Unassigned'}</strong>
+                        </div>
+                      </div>
+                      <div class="text-right">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${filled >= needed ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-800'}">
+                          Instructors: ${filled} / ${needed}
+                        </span>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------- ADMIN: FLEET & LOG ----------
+      function renderAdminFleet() {
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-lg sm:text-xl font-bold text-slate-900">CTC Asset Fleet Management</h2>
+                <p class="text-sm text-slate-600">Manage existing Command Training Centers, clear inspection holds, or add assets (scales easily to 5–6+ kits).</p>
+              </div>
+              <button type="button" data-action="open-add-asset-modal"
+                class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
+                + Add Asset
+              </button>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-x-auto">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                    <th class="py-3 px-4">Asset</th>
+                    <th class="py-3 px-4">Home Location</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4">Condition / Holder</th>
+                    <th class="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${state.assets.map(a => `
+                    <tr>
+                      <td class="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">${escapeHtml(a.id)}</td>
+                      <td class="py-3.5 px-4">
+                        <div class="font-semibold text-slate-800">${escapeHtml(a.homeLocation)}</div>
+                        <div class="text-xs text-slate-500">${escapeHtml(a.address)}</div>
+                      </td>
+                      <td class="py-3.5 px-4 whitespace-nowrap">${statusBadge(a.status)}</td>
+                      <td class="py-3.5 px-4 text-xs text-slate-600">
+                        ${a.status === 'Checked Out' && a.currentCheckout
+                          ? 'Out to <strong>' + escapeHtml(a.currentCheckout.department) + '</strong> (due ' + escapeHtml(formatDateShort(a.currentCheckout.dueDate)) + ')'
+                          : 'Condition: <strong>' + escapeHtml(a.condition) + '</strong>'}
+                      </td>
+                      <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                        ${a.status === 'Needs Inspection' ? `
+                          <button type="button" data-action="mark-available" data-asset-id="${escapeHtml(a.id)}"
+                            class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition">
+                            Clear Hold &rarr; Available
+                          </button>
+                        ` : `
+                          <button type="button" data-action="open-asset-details" data-asset-id="${escapeHtml(a.id)}"
+                            class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
+                            Inspect Kit
+                          </button>
+                        `}
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+              <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200">
+                <h3 class="text-sm font-bold text-slate-900">Recent Portal Activity Log</h3>
+              </div>
+              <div class="divide-y divide-slate-100">
+                ${state.activityLog.slice(0, 10).map(item => `
+                  <div class="px-5 py-3 flex items-start justify-between gap-3 text-xs">
+                    <span class="text-slate-700">${escapeHtml(item.message)}</span>
+                    <span class="text-slate-400 font-mono whitespace-nowrap">${escapeHtml(item.timestamp)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------- MODALS ----------
+      function openReserveModal(assetId) {
+        const asset = getAssetById(assetId);
+        if (!asset) return;
+        openModal('Reserve ' + asset.id + ' (' + asset.homeLocation + ')', `
+          <form id="reserve-form" data-asset-id="${escapeHtml(asset.id)}" class="space-y-4">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
+              <strong>Instant Self-Service:</strong> As long as ${escapeHtml(asset.id)} has no overlapping booking, your reservation confirms immediately.
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Start Date *</label>
+                <input name="startDate" type="date" required value="2026-11-24" min="${TODAY}"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">End Date *</label>
+                <input name="endDate" type="date" required value="2026-11-26" min="${TODAY}"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Department / Agency *</label>
+              <input name="department" type="text" required placeholder="e.g., Hopkins Fire Department"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Contact Name *</label>
+                <input name="contactName" type="text" required placeholder="Capt. Jamie Lee"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Phone *</label>
+                <input name="contactPhone" type="tel" required placeholder="(952) 555-0177"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Purpose *</label>
+              <input name="purpose" type="text" required placeholder="e.g., Continuing Education Sim Drill"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div id="reserve-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800"></div>
+            <div class="flex justify-end gap-2 pt-2">
+              <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700">Cancel</button>
+              <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold">Confirm Instant Reservation</button>
+            </div>
+          </form>
+        `);
+      }
+
+      function openCheckoutModal(assetId) {
+        const asset = getAssetById(assetId);
+        if (!asset) return;
+        openModal('Check Out ' + asset.id + ' (' + asset.homeLocation + ')', `
+          <form id="checkout-form" data-asset-id="${escapeHtml(asset.id)}" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Department / Agency *</label>
+                <input name="department" type="text" required placeholder="e.g., Golden Valley Fire"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Expected Return Date *</label>
+                <input name="dueDate" type="date" required value="2026-11-21" min="${TODAY}"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Picked Up By *</label>
+                <input name="contactName" type="text" required placeholder="Lt. Sam Patel"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Phone *</label>
+                <input name="contactPhone" type="tel" required placeholder="(763) 555-0118"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Training Purpose *</label>
+              <input name="purpose" type="text" required placeholder="e.g., Shift Command Simulation"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="text-xs font-bold text-slate-800 mb-2">Pre-Checkout Kit Verification</div>
+              <div class="space-y-1.5">
+                ${asset.kitItems.map((item, idx) => `
+                  <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                    <input type="checkbox" checked class="rounded accent-blue-600" id="chk-${idx}" />
+                    <span>${escapeHtml(item)}</span>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+              <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700">Cancel</button>
+              <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold">Complete Self-Service Checkout</button>
+            </div>
+          </form>
+        `);
+      }
+
+      function openReturnModal(assetId) {
+        const asset = getAssetById(assetId);
+        if (!asset) return;
+        const holder = asset.currentCheckout ? asset.currentCheckout.department + ' (' + asset.currentCheckout.contactName + ')' : 'Current Borrower';
+        openModal('Return ' + asset.id + ' (' + asset.homeLocation + ')', `
+          <form id="return-form" data-asset-id="${escapeHtml(asset.id)}" class="space-y-4">
+            <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-900">
+              Returning from <strong>${escapeHtml(holder)}</strong> back to <strong>${escapeHtml(asset.homeLocation)}</strong>.
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Returned By *</label>
+              <input name="returnedBy" type="text" required value="${escapeHtml(asset.currentCheckout ? asset.currentCheckout.contactName : '')}"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Kit Condition *</label>
+              <select name="condition" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white">
+                <option value="Good">Good — All items present &amp; ready for next user</option>
+                <option value="Minor Wear">Minor Wear — Functional, note for admin</option>
+                <option value="Needs Inspection">Missing Item or Damage — Place on Inspection Hold</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Return Notes (Optional)</label>
+              <textarea name="notes" rows="2" placeholder="Charged radios, noted any missing cables or software issues..."
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+              <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700">Cancel</button>
+              <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold">Confirm Return</button>
+            </div>
+          </form>
+        `);
+      }
+
+      function openAssetDetailsModal(assetId) {
+        const asset = getAssetById(assetId);
+        if (!asset) return;
+        const reservations = state.reservations.filter(r => r.assetId === asset.id && r.status === 'Confirmed');
+        openModal(asset.id + ' — ' + asset.homeLocation, `
+          <div class="space-y-4 text-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-500">${escapeHtml(asset.address)}</span>
+              ${statusBadge(asset.status)}
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Included Kit Contents</div>
+              <ul class="space-y-1 text-xs text-slate-700 list-disc pl-5">
+                ${asset.kitItems.map(i => '<li>' + escapeHtml(i) + '</li>').join('')}
+              </ul>
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Confirmed Reservations (${reservations.length})</div>
+              ${reservations.length ? reservations.map(r => `
+                <div class="text-xs p-2.5 rounded-xl bg-slate-50 border border-slate-200 mb-1.5 flex justify-between gap-2">
+                  <span><strong>${escapeHtml(r.department)}</strong> &mdash; ${escapeHtml(r.purpose)}</span>
+                  <span class="font-semibold whitespace-nowrap">${escapeHtml(formatRange(r.startDate, r.endDate))}</span>
+                </div>
+              `).join('') : '<div class="text-xs text-slate-400 italic">No upcoming bookings.</div>'}
+            </div>
+            <div class="flex justify-end pt-2">
+              <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold">Close</button>
+            </div>
+          </div>
+        `);
+      }
+
+      function openAddAssetModal() {
+        const nextNum = state.assets.length + 1;
+        openModal('Add New Asset to Fleet', `
+          <form id="add-asset-form" class="space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Asset ID *</label>
+                <input name="id" type="text" required value="CTC-${nextNum}"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Home Station / Location *</label>
+                <input name="homeLocation" type="text" required placeholder="e.g., Minnetonka Fire"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Street Address *</label>
+              <input name="address" type="text" required placeholder="e.g., 14550 Minnetonka Blvd, Minnetonka, MN"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Pickup / Storage Notes</label>
+              <input name="notes" type="text" placeholder="e.g., Training Room Cabinet 2"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+              <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700">Cancel</button>
+              <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold">Add Asset</button>
+            </div>
+          </form>
+        `);
+      }
+
+      function openEmbedModal() {
+        const snippet = '<iframe\n  src="https://portal.yourtraininggroup.org/blue-card"\n  title="Blue Card & CTC Asset Portal"\n  style="width:100%; min-height:780px; border:0; border-radius:12px;"\n  loading="lazy">\n</iframe>';
+        openModal('Website Embed & Mobile Access', `
+          <div class="space-y-4 text-xs text-slate-700">
+            <p>When deployed, this single web app works in <strong>iOS Safari</strong>, <strong>Android Chrome</strong> (addable to home screen as a PWA), and embeds directly into any existing website with one snippet:</p>
+            <pre id="embed-snippet" class="p-3.5 rounded-xl bg-slate-900 text-sky-300 overflow-x-auto font-mono text-[11px] leading-relaxed">${escapeHtml(snippet)}</pre>
+            <div class="flex justify-between items-center gap-2 pt-1">
+              <button type="button" data-action="copy-embed" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition">Copy Embed Snippet</button>
+              <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold">Close</button>
+            </div>
+          </div>
+        `);
+      }
+
+      // ---------- EVENT DELEGATION ----------
+      document.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) {
+          if (e.target.id === 'modal-overlay') closeModal();
+          return;
+        }
+        const action = btn.getAttribute('data-action');
+
+        if (action === 'switch-role') {
+          state.role = btn.getAttribute('data-role');
+          render();
+        } else if (action === 'switch-preview') {
+          state.preview = btn.getAttribute('data-preview');
+          render();
+        } else if (action === 'switch-tab') {
+          state.activeTab[state.role] = btn.getAttribute('data-tab');
+          render();
+        } else if (action === 'close-modal') {
+          closeModal();
+        } else if (action === 'open-reserve-modal') {
+          openReserveModal(btn.getAttribute('data-asset-id'));
+        } else if (action === 'open-checkout-modal') {
+          openCheckoutModal(btn.getAttribute('data-asset-id'));
+        } else if (action === 'open-return-modal') {
+          openReturnModal(btn.getAttribute('data-asset-id'));
+        } else if (action === 'open-asset-details') {
+          openAssetDetailsModal(btn.getAttribute('data-asset-id'));
+        } else if (action === 'open-add-asset-modal') {
+          openAddAssetModal();
+        } else if (action === 'open-embed-modal') {
+          openEmbedModal();
+        } else if (action === 'copy-embed') {
+          const pre = document.getElementById('embed-snippet');
+          const text = pre ? pre.textContent : '';
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => showToast('Embed code copied to clipboard!', 'success')).catch(() => fallbackCopy(text));
+          } else {
+            fallbackCopy(text);
+          }
+        } else if (action === 'reset-demo') {
+          state = getInitialState();
+          render();
+          showToast('Demo data reset to initial state.', 'info');
+        } else if (action === 'confirm-lab') {
+          handleConfirmLab(btn.getAttribute('data-lab-id'));
+        } else if (action === 'decline-lab') {
+          handleDeclineLab(btn.getAttribute('data-lab-id'));
+        } else if (action === 'toggle-instructor-signup') {
+          handleToggleInstructor(btn.getAttribute('data-lab-id'));
+        } else if (action === 'mark-available') {
+          const asset = getAssetById(btn.getAttribute('data-asset-id'));
+          if (asset) {
+            asset.status = 'Available';
+            asset.condition = 'Good';
+            asset.notes = 'Cleared by Admin inspection. Ready for instant self-service.';
+            logActivity('return', asset.id + ' (' + asset.homeLocation + ') cleared from inspection hold and returned to Available.');
+            render();
+            showToast(asset.id + ' is now Available.', 'success');
+          }
+        }
+      });
+
+      document.addEventListener('change', function (e) {
+        if (e.target.id === 'instructor-switcher') {
+          const chosen = SAMPLE_INSTRUCTORS.find(i => i.name === e.target.value);
+          if (chosen) {
+            state.activeInstructor = Object.assign({}, chosen);
+            render();
+            showToast('Switched instructor view to ' + chosen.name, 'info');
+          }
+        }
+      });
+
+      document.addEventListener('input', function (e) {
+        if (e.target.id === 'lab-students') {
+          const val = parseInt(e.target.value, 10) || 1;
+          const req = requiredInstructors(val);
+          const pill = document.getElementById('ratio-pill');
+          if (pill) {
+            pill.textContent = val + ' Student' + (val > 1 ? 's' : '') + ' \u2192 ' + req + ' Instructor' + (req > 1 ? 's' : '') + ' Needed (4:1)';
+          }
+        }
+      });
+
+      document.addEventListener('submit', function (e) {
+        const form = e.target;
+        if (form.id === 'lab-request-form') {
+          e.preventDefault();
+          const fd = new FormData(form);
+          const startDate = fd.get('startDate');
+          const endDate = fd.get('endDate');
+          if (endDate < startDate) {
+            showToast('End date must be on or after the start date.', 'error');
+            return;
+          }
+          const studentCount = Math.max(1, Math.min(12, parseInt(fd.get('studentCount'), 10) || 1));
+          const newId = 'LAB-' + (201 + state.labs.length);
+          state.labs.unshift({
+            id: newId,
+            department: fd.get('department').trim(),
+            hostFacility: fd.get('hostFacility').trim(),
+            contactName: fd.get('contactName').trim(),
+            contactEmail: fd.get('contactEmail').trim(),
+            contactPhone: fd.get('contactPhone').trim(),
+            startDate,
+            endDate,
+            studentCount,
+            preferredAssetId: fd.get('preferredAssetId') || '',
+            reservedAssetId: null,
+            status: 'Pending Confirmation',
+            instructors: [],
+            notes: (fd.get('notes') || '').trim()
+          });
+          logActivity('lab', newId + ' requested by ' + fd.get('department').trim() + ' (' + studentCount + ' students, ' + formatRange(startDate, endDate) + ').');
+          state.activeTab.public = 'schedule';
+          render();
+          showToast('Lab request ' + newId + ' submitted! Switch to Admin to confirm & auto-reserve a CTC.', 'success');
+        } else if (form.id === 'reserve-form') {
+          e.preventDefault();
+          const assetId = form.getAttribute('data-asset-id');
+          const fd = new FormData(form);
+          const startDate = fd.get('startDate');
+          const endDate = fd.get('endDate');
+          const errEl = document.getElementById('reserve-error');
+          if (endDate < startDate) {
+            errEl.textContent = 'End date must be on or after the start date.';
+            errEl.classList.remove('hidden');
+            return;
+          }
+          const conflicts = getAssetConflicts(assetId, startDate, endDate);
+          if (conflicts.length > 0) {
+            const alt = findAvailableAssetForDates(startDate, endDate, null);
+            errEl.innerHTML = '<strong>Date conflict on ' + escapeHtml(assetId) + ':</strong> ' +
+              escapeHtml(conflicts[0].label + ' (' + conflicts[0].dates + ')') + '.' +
+              (alt ? ' Try <strong>' + escapeHtml(alt.id + ' — ' + alt.homeLocation) + '</strong>, which is open for those dates.' : '');
+            errEl.classList.remove('hidden');
+            return;
+          }
+          const asset = getAssetById(assetId);
+          state.reservations.push({
+            id: 'RES-' + (1001 + state.reservations.length),
+            assetId,
+            department: fd.get('department').trim(),
+            contactName: fd.get('contactName').trim(),
+            contactPhone: fd.get('contactPhone').trim(),
+            startDate,
+            endDate,
+            purpose: fd.get('purpose').trim(),
+            linkedLabId: null,
+            status: 'Confirmed'
+          });
+          logActivity('reserve', assetId + ' (' + (asset ? asset.homeLocation : '') + ') instantly reserved by ' + fd.get('department').trim() + ' for ' + formatRange(startDate, endDate) + '.');
+          closeModal();
+          render();
+          showToast(assetId + ' instantly reserved for ' + formatRange(startDate, endDate) + '!', 'success');
+        } else if (form.id === 'checkout-form') {
+          e.preventDefault();
+          const assetId = form.getAttribute('data-asset-id');
+          const asset = getAssetById(assetId);
+          if (!asset) return;
+          const fd = new FormData(form);
+          asset.status = 'Checked Out';
+          asset.currentCheckout = {
+            department: fd.get('department').trim(),
+            contactName: fd.get('contactName').trim(),
+            contactPhone: fd.get('contactPhone').trim(),
+            checkedOutDate: TODAY,
+            dueDate: fd.get('dueDate'),
+            purpose: fd.get('purpose').trim()
+          };
+          logActivity('checkout', asset.id + ' (' + asset.homeLocation + ') checked out by ' + asset.currentCheckout.contactName + ' (' + asset.currentCheckout.department + ') — due ' + asset.currentCheckout.dueDate + '.');
+          closeModal();
+          render();
+          showToast(asset.id + ' checked out! Due back ' + formatDateShort(asset.currentCheckout.dueDate) + '.', 'success');
+        } else if (form.id === 'return-form') {
+          e.preventDefault();
+          const assetId = form.getAttribute('data-asset-id');
+          const asset = getAssetById(assetId);
+          if (!asset) return;
+          const fd = new FormData(form);
+          const condition = fd.get('condition');
+          const returnedBy = fd.get('returnedBy').trim();
+          const notes = (fd.get('notes') || '').trim();
+          asset.currentCheckout = null;
+          asset.condition = condition;
+          if (condition === 'Needs Inspection') {
+            asset.status = 'Needs Inspection';
+            asset.notes = notes || 'Flagged on return by ' + returnedBy + ' for missing item/damage.';
+          } else {
+            asset.status = 'Available';
+            asset.notes = notes ? 'Returned by ' + returnedBy + ': ' + notes : 'Returned in ' + condition.toLowerCase() + ' condition by ' + returnedBy + '.';
+          }
+          logActivity('return', asset.id + ' (' + asset.homeLocation + ') returned by ' + returnedBy + ' (' + condition + ').');
+          closeModal();
+          render();
+          showToast(condition === 'Needs Inspection' ? asset.id + ' returned & flagged for Admin inspection.' : asset.id + ' returned and is now Available!', condition === 'Needs Inspection' ? 'warning' : 'success');
+        } else if (form.id === 'add-asset-form') {
+          e.preventDefault();
+          const fd = new FormData(form);
+          const id = fd.get('id').trim().toUpperCase();
+          if (getAssetById(id)) {
+            showToast('An asset with ID ' + id + ' already exists.', 'error');
+            return;
+          }
+          state.assets.push({
+            id,
+            name: id + ' (Command Training Center in a Box)',
+            homeLocation: fd.get('homeLocation').trim(),
+            address: fd.get('address').trim(),
+            status: 'Available',
+            condition: 'Good',
+            currentCheckout: null,
+            kitItems: DEFAULT_KIT_ITEMS.slice(),
+            notes: (fd.get('notes') || 'Ready for instant self-service checkout.').trim()
+          });
+          logActivity('reserve', 'Added new asset ' + id + ' (' + fd.get('homeLocation').trim() + ') to fleet.');
+          closeModal();
+          render();
+          showToast('Added ' + id + ' to the fleet!', 'success');
+        }
+      });
+
+      function handleConfirmLab(labId) {
+        const lab = state.labs.find(l => l.id === labId);
+        if (!lab) return;
+        const candidate = findAvailableAssetForDates(lab.startDate, lab.endDate, lab.preferredAssetId);
+        if (!candidate) {
+          showToast('No CTC is available for ' + formatRange(lab.startDate, lab.endDate) + '. Adjust dates or free a booking first.', 'error');
+          return;
+        }
+        lab.status = 'Confirmed';
+        lab.reservedAssetId = candidate.id;
+        state.reservations.push({
+          id: 'RES-' + (1001 + state.reservations.length),
+          assetId: candidate.id,
+          department: lab.department,
+          contactName: lab.contactName,
+          contactPhone: lab.contactPhone,
+          startDate: lab.startDate,
+          endDate: lab.endDate,
+          purpose: 'Blue Card Initial Certification Lab (' + lab.studentCount + ' students)',
+          linkedLabId: lab.id,
+          status: 'Confirmed'
+        });
+        logActivity('lab', lab.id + ' (' + lab.department + ') confirmed — ' + candidate.id + ' (' + candidate.homeLocation + ') auto-reserved for ' + formatRange(lab.startDate, lab.endDate) + '.');
+        render();
+        showToast('Lab confirmed! ' + candidate.id + ' (' + candidate.homeLocation + ') auto-reserved & instructor slots opened.', 'success');
+      }
+
+      function handleDeclineLab(labId) {
+        const lab = state.labs.find(l => l.id === labId);
+        if (!lab) return;
+        lab.status = 'Declined';
+        logActivity('lab', lab.id + ' (' + lab.department + ') declined by Admin.');
+        render();
+        showToast(lab.id + ' marked as declined.', 'info');
+      }
+
+      function handleToggleInstructor(labId) {
+        const lab = state.labs.find(l => l.id === labId);
+        if (!lab) return;
+        const me = state.activeInstructor;
+        const idx = lab.instructors.findIndex(i => i.name === me.name);
+        if (idx >= 0) {
+          lab.instructors.splice(idx, 1);
+          logActivity('lab', me.name + ' withdrew from teaching ' + lab.id + ' (' + lab.department + ').');
+          render();
+          showToast('Withdrawn from ' + lab.department + ' lab.', 'info');
+        } else {
+          const needed = requiredInstructors(lab.studentCount);
+          if (lab.instructors.length >= needed) {
+            showToast('Instructor roster is already full for this lab.', 'warning');
+            return;
+          }
+          lab.instructors.push(Object.assign({}, me));
+          logActivity('lab', me.name + ' signed up to teach ' + lab.id + ' (' + lab.department + ', ' + formatRange(lab.startDate, lab.endDate) + ').');
+          render();
+          showToast('Signed up to teach ' + lab.department + ' (' + formatRange(lab.startDate, lab.endDate) + ')!', 'success');
+        }
+      }
+
+      function fallbackCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          showToast('Embed code copied to clipboard!', 'success');
+        } catch (err) {
+          showToast('Select the snippet above to copy.', 'info');
+        }
+        ta.remove();
+      }
+
+      render();
+    })();
+  </script>
+</body>
+</html>
